@@ -23,8 +23,10 @@
 
 /****************** Number printing *****************/
 
+int _printf(const char *format, ...);
+
 int print_int(va_list args, char buffer[],
-		int flags, int width, int precision, int size;
+	int flags, int width, int precision, int size;
 
 int print_binary(va_list args, char buffer [],
 	int flags, int width, int precision, int size);
