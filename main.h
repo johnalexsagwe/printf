@@ -21,4 +21,13 @@
 	convert_match;
 }
 
+/****************** Number printing *****************/
 
+int print_int(va_list args, char buffer[],
+		int flags, int width, int precision, int size;
+
+int print_binary(va_list args, char buffer [],
+	int flags, int width, int precision, int size);
+
+int print_unsigned(va_lists args, char buffer[]
+	int flags, int width, int 
