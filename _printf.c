@@ -4,7 +4,7 @@
 /**
  * _printf - prints characters
  * @format: is the format.
- * Return: printed characters
+ * Return: charCount.
  */
 int _printf(const char *format, ...)
 {
@@ -24,33 +24,21 @@ int _printf(const char *format, ...)
 			if (*format == ' ')
 				return (-1);
 			if (*format == 'c')
-				c = (char)va_arg(args, int);
-				write(1, &c, 1);
-				charCount++;
-			}
+				handle_char(args, &charCount);
 			else if (*format == 's')
-				s = va_arg(args, char *);
-				while (*s)
-				{
-					wite(1, s, 1);
-					s++;
-					charCount++;
-				}
-				else if (*format == '%')
-					write(1, format, 1);
-				charCount++;
-			}
+				handle_string(args, &charCount);
+			else if (*format == '%')
+				handle_percent(&charCount);
 			else
-			{
-				write(1, "%", 1);
-				write(1, format, 1);
-				charCount += 2;
-			}
-			else
-			{
+				handle_unknown(*format, *charCount);
+		}
+		else
+		{
 				write(1, format, 1);
 				charCount++;
-			}
-			va_end(args);
-			return (charCount);
+		}
+		format++;
+	}
+	va_end(args);
+	return (charCount);
 }
