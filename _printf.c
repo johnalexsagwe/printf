@@ -1,65 +1,61 @@
 #include "main.h"
-#include <stdarg.h>
 
 /**
- * _printf - printf function
- * @format: is the format.
- * Return: charCount.
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
+
 int _printf(const char *format, ...)
 {
-	int charCount = 0;
-	char c;
-	char *str;
+	int count = 0;
 	va_list args;
 
 	va_start(args, format);
+
 	if (format == NULL)
-	{
 		return (-1);
-	}
-	while (*format)
+	va_start(args, format);
+	while (*format != '\0')
 	{
-		if (*format == '%')
+		if (*format != '%')
+		{
+			write(1, format, 1);
+			count++;
+		}
+		else
 		{
 			format++;
-			if (*format == '\0')
-				break;
 			if (*format == 'c')
 			{
-				c = (char)va_arg(args, int);
-				putchar(c);
-				charCount++;
+				char c = va_arg(args, int);
+
+				write(1, &c, 1);
+				count++;
 			}
 			else if (*format == 's')
 			{
-				str = va_arg(args, char *);
-				while (*str)
+				char *str = va_arg(args, char *);
+
+				if (str)
 				{
-					putchar(*str);
-					str++;
-					charCount++;
+					while (*str != '\0')
+					{
+						write(1, str, 1);
+						str++;
+						count++;
+					}
 				}
 			}
 			else if (*format == '%')
 			{
-				putchar('%');
-				charCount++;
+				write(1, "%", 1);
+				count++;
 			}
-			else
-			{
-				putchar('%');
-				putchar(*format);
-				charCount += 2;
-			}
-		}
-		else
-		{
-			putchar(*format);
-			charCount++;
 		}
 		format++;
 	}
+
 	va_end(args);
-	return (charCount);
+	return (count);
 }
