@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdarg.h>
+#include <unistd.h>
 
 /**
  * _printf - prints characters
@@ -30,7 +31,7 @@ int _printf(const char *format, ...)
 			else if (*format == '%')
 				handle_percent(&charCount);
 			else
-				handle_unknown(*format, *charCount);
+				handle_unknown(*format, &charCount);
 		}
 		else
 		{
