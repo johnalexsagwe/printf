@@ -1,4 +1,14 @@
 #include "main.h"
+#include <stdarg.h>
+#include <unistd.h>
+
+void handle_char(va_list args, int *count)
+{
+	char c = (char)va_arg(args, int);
+
+	write(1, &c, 1);
+	(*count)++;
+}
 
 /**
  * _printf - Printf function
@@ -11,51 +21,30 @@ int _printf(const char *format, ...)
 	int count = 0;
 	va_list args;
 
-	va_start(args, format);
-
 	if (format == NULL)
 		return (-1);
 	va_start(args, format);
-	while (*format != '\0')
+	while (*format)
 	{
-		if (*format != '%')
+		if (*format == '%')
+		{
+			format++;
+			if (*format == '\0')
+				break;
+			if (*format == 'c')
+				handle_char(args, &count);
+			else if (*format == '%')
+				handle_percent(&count);
+			else
+				handle_unknown(*format, &count);
+		}
+		else
 		{
 			write(1, format, 1);
 			count++;
 		}
-		else
-		{
-			format++;
-			if (*format == 'c')
-			{
-				char c = va_arg(args, int);
-
-				write(1, &c, 1);
-				count++;
-			}
-			else if (*format == 's')
-			{
-				char *str = va_arg(args, char *);
-
-				if (str)
-				{
-					while (*str != '\0')
-					{
-						write(1, str, 1);
-						str++;
-						count++;
-					}
-				}
-			}
-			else if (*format == '%')
-			{
-				write(1, "%", 1);
-				count++;
-			}
-		}
 		format++;
 	}
-
 	va_end(args);
 	return (count);
 }
