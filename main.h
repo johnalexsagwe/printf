@@ -19,6 +19,15 @@
 #define S_LONG 2
 #define S_SHORT 1
 
+/* Define the flags_t type */
+typedef struct flags {
+    int minus;
+    int plus;
+    int zero;
+    int hash;
+    int space;
+} flags_t;
+
 /**
  * struct fmt - Struct op
  *
@@ -114,5 +123,8 @@ int is_digit(char);
 
 long int convert_size_number(long int num, int size);
 long int convert_size_unsgnd(unsigned long int num, int size);
+
+/* Function to handle '%' specifier */
+void handle_percent(int *count);
 
 #endif /* MAIN_H */

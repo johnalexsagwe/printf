@@ -1,3 +1,5 @@
+#include "main.h"
+
 /**
  * get_flags_and_update - Takes active formatting flags, updates struct flags
  * @format: The formatted string containing the flags
@@ -5,7 +7,7 @@
  * @f: Pointer to the struct flags in which we turn the flags on
  * Return: Calculated flags
  */
-int get_flags_and_update(const char *format, int *i, flags_t *f)
+int get_flags_and_update(const char *format, int *i)
 {
 	int j, curr_i;
 	int flags = 0;
@@ -19,7 +21,6 @@ int get_flags_and_update(const char *format, int *i, flags_t *f)
 			if (format[curr_i] == FLAGS_CH[j])
 			{
 				flags |= FLAGS_ARR[j];
-				get_flag(format[curr_i], f);
 				break;
 			}
 		}
