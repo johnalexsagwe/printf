@@ -3,6 +3,11 @@
 #ifndef UNUSED_H
 #define UNUSED_H
 
+/* UNUSED is a macro used to prevent unused variable warnings */
+#define UNUSED(x) (void)(x)
+
+#endif /* UNUSED_H */
+
 /*******************WRITE HANDLE********************/
 /**
  * handle_write_char - prints out a string
