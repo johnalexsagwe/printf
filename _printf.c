@@ -1,4 +1,4 @@
-#include "main.h"
+i#include "main.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
@@ -33,18 +33,6 @@ void handle_reverse_string(va_list args, int *count)
 		write(1, &str[i], 1);
 		(*count)++;
 	}
-}
-
-/**
- * _handle_unknown - Handles an unknown conversion specifier
- * @specifier: The unknown specifier
- * @count: A pointer to the count of printed characters
- */
-void _handle_unknown(char specifier, int *count)
-{
-	write(1, "%", 1);
-	write(1, &specifier, 1);
-	(*count) += 2;
 }
 
 /**
