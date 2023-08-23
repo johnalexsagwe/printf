@@ -82,19 +82,19 @@ int get_flags(const char *format, int *i)
 		switch (format[*i])
 		{
 			case '-':
-				flags |= 1; /* Set left-justify flag */
+				flags |= 1;
 				break;
 			case '+':
-				flags |= 2; /* Set sign flag */
+				flags |= 2;
 				break;
 			case ' ':
-				flags |= 4; /* Set space flag */
+				flags |= 4;
 				break;
 			case '#':
-				flags |= 8; /* Set alternate form flag */
+				flags |= 8;
 				break;
 			case '0':
-				flags |= 16; /* Set zero padding flag */
+				flags |= 16;
 				break;
 			default:
 				done = true;
@@ -104,5 +104,5 @@ int get_flags(const char *format, int *i)
 			(*i)++;
 	}
 
-	return flags;
+	return (flags);
 }
