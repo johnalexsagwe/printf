@@ -1,118 +1,108 @@
 #include "main.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <string.h>
+#include "stdbool.h"
+
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
- * handle_char - Handles the %c conversion specifier
- * @args: The va_list containing the argument
- * @count: A pointer to the count of printed characters
- */
-void handle_char(va_list args, int *count)
-{
-        char c = (char)va_arg(args, int);
-
-        write(1, &c, 1);
-        (*count)++;
-}
-
-/**
- * handle_reverse_string - Handles the %r conversion specifier
- * @args: The va_list containing the argument (a string)
- * @count: A pointer to the count of printed characters
- */
-void handle_reverse_string(va_list args, int *count)
-{
-        const char *str = va_arg(args, const char *);
-        int length = strlen(str);
-        int i;
-
-        for (i = length - 1; i >= 0; i--)
-        {
-                write(1, &str[i], 1);
-                (*count)++;
-        }
-}
-
-/**
- * _handle_unknown - Handles an unknown conversion specifier
- * @specifier: The unknown specifier
- * @count: A pointer to the count of printed characters
- */
-void _handle_unknown(char specifier, int *count)
-{
-        write(1, "%", 1);
-        write(1, &specifier, 1);
-        (*count) += 2;
-}
-
-/**
- * _handle_percent - Handles the %% conversion specifier
- * @count: A pointer to the count of printed characters
- */
-void _handle_percent(int *count)
-{
-        write(1, "%", 1);
-        (*count)++;
-}
-
-/**
- * _handle_custom - Handles the custom conversion specifier %r
- * @format: The format string
- * @args: The va_list containing the argument
- * @count: A pointer to the count of printed characters
- */
-void _handle_custom(const char *format, va_list args, int *count)
-{
-        format++;
-        if (*format != '\0' && *format == 's')
-                handle_reverse_string(args, count);
-        else
-                _handle_unknown('r', count);
-}
-
-/**
- * _printf - Custom printf function with additional conversion specifier
- * @format: The format string with optional conversion specifiers
- * Return: The number of characters printed
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-        int count = 0;
-        va_list args;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-        if (format == NULL)
-                return (-1);
+	if (format == NULL)
+		return (-1);
 
-        va_start(args, format);
+	va_start(list, format);
 
-        while (*format)
-        {
-                if (*format == '%')
-                {
-                        format++;
+	for (i = 0; format && format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
 
-                        if (*format == '\0')
-                                break;
+	print_buffer(buffer, &buff_ind);
 
-                        if (*format == 'c')
-                                handle_char(args, &count);
-                        else if (*format == '%')
-                                _handle_percent(&count);
-                        else if (*format == 'r')
-                                _handle_custom(format, args, &count);
-                        else
-                                _handle_unknown(*format, &count);
-                }
-                else
-                {
-                        write(1, format, 1);
-                        count++;
-                }
-                format++;
-        }
+	va_end(list);
 
-        va_end(args);
-        return (count);
+	return (printed_chars);
+}
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
+}
+
+/**
+ * get_flags - Parse and return flags from format string
+ * @format: Format string
+ * @i: Pointer to the current position in the format string
+ * Return: Flags as an integer
+ */
+int get_flags(const char *format, int *i)
+{
+	int flags = 0;
+	bool done = false;
+
+	while (!done)
+	{
+		switch (format[*i])
+		{
+			case '-':
+				flags |= 1; /* Set left-justify flag */
+				break;
+			case '+':
+				flags |= 2; /* Set sign flag */
+				break;
+			case ' ':
+				flags |= 4; /* Set space flag */
+				break;
+			case '#':
+				flags |= 8; /* Set alternate form flag */
+				break;
+			case '0':
+				flags |= 16; /* Set zero padding flag */
+				break;
+			default:
+				done = true;
+				break;
+		}
+		if (!done)
+			(*i)++;
+	}
+
+	return flags;
 }
